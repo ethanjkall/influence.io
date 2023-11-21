@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { FaGoogle, FaFacebookF, FaTwitter, FaRegEnvelope, FaUserCircle } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
 import { signIn } from 'next-auth/react';
@@ -24,8 +23,6 @@ function SignUp() {
   const [lastName, setLastName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-
-  const router = useRouter();
 
   async function handleSubmit(evnt) {
     evnt.preventDefault();
@@ -91,13 +88,13 @@ function SignUp() {
 function SocialMediaLogin() {
   return (
     <div className="flex justify-center my-2">
-      <Link href={"/"} onClick={() => signIn('google')} className="border-2 border-gray-200 rounded-full p-3 mx-1 hover:bg-gray-200">
+      <Link href={"/"} onClick={() => signIn('google', { redirect: true, callbackUrl: "/dashboard/analytics"})} className="border-2 border-gray-200 rounded-full p-3 mx-1 hover:bg-gray-200">
         <FaGoogle className="text-sm" />
       </Link>
-      <Link href={"/"} onClick={() => signIn('facebook')} className="border-2 border-gray-200 rounded-full p-3 mx-1 hover:bg-gray-200">
+      <Link href={"/"} onClick={() => signIn('facebook', { redirect: true, callbackUrl: "/dashboard/analytics"})} className="border-2 border-gray-200 rounded-full p-3 mx-1 hover:bg-gray-200">
         <FaFacebookF className="text-sm" />
       </Link>
-      <Link href={"/"} onClick={() => signIn('twitter')} className="border-2 border-gray-200 rounded-full p-3 mx-1 hover:bg-gray-200">
+      <Link href={"/"} onClick={() => signIn('twitter', { redirect: true, callbackUrl: "/dashboard/analytics"})} className="border-2 border-gray-200 rounded-full p-3 mx-1 hover:bg-gray-200">
         <FaTwitter className="text-sm" />
       </Link>
     </div>
