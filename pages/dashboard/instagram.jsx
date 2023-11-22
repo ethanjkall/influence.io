@@ -104,7 +104,7 @@ function InstagramLoginButton({
   const initiateInstagramLogin = async () => {
     const clientId = process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID;
     const redirectUri = window.location.origin + "/dashboard/instagram";
-    const scope = "user_profile,user_media";
+    const scope = "user_profile,user_media,instagram_graph_user_profile";
     const instagramLoginUrl = `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`;
     window.location.href = instagramLoginUrl;
   };
