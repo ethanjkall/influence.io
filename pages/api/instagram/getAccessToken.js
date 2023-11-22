@@ -2,7 +2,7 @@ import prisma from "../../../lib/prisma";
 import { getServerSession } from "next-auth/next";
 
 async function getUserId(email) {
-  const userId = await prisma.user.findUnique({
+  const userId = await prisma.User.findUnique({
     where: {
       email: email,
     },
