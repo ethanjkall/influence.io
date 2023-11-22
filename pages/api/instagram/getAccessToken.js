@@ -102,8 +102,7 @@ export default async function handler(req, res) {
       // TODO: Make another API call to retrieve long lived access token
       const data = await response.json();
       const accessToken = data.access_token;
-      console.log("Access Token: " + accessToken);
-      var clientSecret = process.env.FACEBOOK_CLIENT_SECRET;
+      var clientSecret = process.env.INSTAGRAM_CLIENT_SECRET;
       var address = `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${clientSecret}&access_token=${accessToken}`;
       console.log("Address:" + address);
       const finalResponse = await fetch(address, {
