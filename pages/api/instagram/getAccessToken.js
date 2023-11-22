@@ -74,6 +74,10 @@ export default async function handler(req, res) {
       var clientId = process.env.INSTAGRAM_CLIENT_ID;
       var clientSecret = process.env.INSTAGRAM_CLIENT_SECRET;
       var address = `https://api.instagram.com/oauth/access_token`;
+      console.log(clientId);
+      console.log(clientSecret);
+      console.log(code);
+      console.log(redirectUri);
       const response = await fetch(address, {
         method: "POST",
         headers: {
