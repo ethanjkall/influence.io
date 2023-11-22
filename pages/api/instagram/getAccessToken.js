@@ -92,31 +92,45 @@ export default async function handler(req, res) {
         }),
       });
 
-      // TODO: Make another API call to retrieve long lived access token
-
       if (!response.ok) {
         const errorMessage = await response.text();
         return res.status(response.status).json({
-          message: `Failed to fetch Instagram access token from API: ${errorMessage}`,
+          message: `Failed to fetch short-lived Instagram access token from API: ${errorMessage}`,
         });
       }
 
+      // TODO: Make another API call to retrieve long lived access token
       const data = await response.json();
-      console.log(data);
+      const accessToken = data.access_token;
+      var clientSecret = process.env.FACEBOOK_CLIENT_SECRET;
+      var address = `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${clientSecret}&access_token=${accessToken}`;
+      const finalResponse = await fetch(address, {
+        method: "GET",
+      });
+
+      if (!finalResponse.ok) {
+        const errorMessage = await finalResponse.text();
+        return res.status(finalResponse.status).json({
+          message: `Failed to fetch long-lived Instagram access token from API: ${errorMessage}`,
+        });
+      }
+
+      const finalData = await finalResponse.json();
+      console.log(finalData);
 
       // Add access token to database and return the new account token
-      //   const userId = await getUserId(email);
-      //   const accountToken = await prisma.AccountToken.create({
-      //     data: {
-      //       userId: userId,
-      //       name: "instagram",
-      //       accessToken: data.access_token,
-      //       tokenType: data.token_type,
-      //       expires: new Date(Date.now() + 60 * 60 * 1000),
-      //     },
-      //   });
+      const userId = await getUserId(email);
+      const accountToken = await prisma.AccountToken.create({
+        data: {
+          userId: userId,
+          name: "instagram",
+          accessToken: finalData.access_token,
+          tokenType: finalData.token_type,
+          expires: new Date(Date.now() + finalData.expires_in * 1000),
+        },
+      });
 
-      return res.status(200).json({ data });
+      return res.status(200).json({ accountToken });
     } catch (error) {
       console.error("Error fetching Instagram access token: ", error.message);
       return res.status(500).json({ message: "Internal server error" });
