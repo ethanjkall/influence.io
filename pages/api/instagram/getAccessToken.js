@@ -76,13 +76,16 @@ export default async function handler(req, res) {
       var address = `https://api.instagram.com/oauth/access_token`;
       const response = await fetch(address, {
         method: "POST",
-        body: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           client_id: clientId,
           client_secret: clientSecret,
           grant_type: "authorization_code",
           redirect_uri: redirectUri,
           code: code,
-        },
+        }),
       });
 
       // TODO: Make another API call to retrieve long lived access token
