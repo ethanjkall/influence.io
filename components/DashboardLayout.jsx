@@ -1,51 +1,25 @@
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const ActiveMenuLink = ({ children, href }) => {
-  const pathname = usePathname();
-  const active = href === pathname;
-
-  return (
-    <Link
-      href={href}
-      className={`hover:bg-gray-100 p-2 rounded block text-sm ${
-        active ? "text-black font-semibold" : "text-gray-500"
-      }`}
-    >
-      {children}
-    </Link>
-  );
-};
+import { useEffect, useState } from "react";
+import Sidebar from "./Sidebar";
 
 const DashboardLayout = ({ children }) => {
+  const [currentSocialMedia, setCurrentSocialMedia] = useState();
+
+  function handleCurrentSocialMedia(socialMedia) {
+    setCurrentSocialMedia(socialMedia);
+  }
+
+  useEffect(function () {
+    setCurrentSocialMedia("Analytics");
+  }, []);
+
   return (
-    <div className="flex gap-8">
-      <aside className="flex-[0.75]">
-        <nav>
-          <ul className="grid gap-3 pt-6">
-            <li className="">
-              <ActiveMenuLink href="/dashboard/analytics">Accounts</ActiveMenuLink>
-            </li>
-            <li>
-              <ActiveMenuLink href="/dashboard/facebook">Facebook</ActiveMenuLink>
-            </li>
-            <li>
-              <ActiveMenuLink href="/dashboard/instagram">Instagram</ActiveMenuLink>
-            </li>
-            <li>
-              <ActiveMenuLink href="/dashboard/tiktok">TikTok</ActiveMenuLink>
-            </li>
-            <li>
-              <ActiveMenuLink href="/dashboard/youtube">Youtube</ActiveMenuLink>
-            </li>
-            <li>
-              <ActiveMenuLink href="/dashboard/twitter">Twitter</ActiveMenuLink>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-      <div className="bg-gray-100 flex-[8] p-4 rounded min-h-screen pt-6">{children}</div>
-    </div>
+    <main className="flex w-full min-h-screen">
+      <Sidebar
+        handleCurrentSocialMedia={handleCurrentSocialMedia}
+        currentSocialMedia={currentSocialMedia}
+      />
+      <div className="w-5/6 mx-auto py-10">{children}</div>
+    </main>
   );
 };
 

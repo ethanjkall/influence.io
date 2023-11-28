@@ -1,17 +1,21 @@
-import RootLayout from "@/components/Layout";
+import RootLayout from "@/components/RootLayout";
 import DashboardLayout from "@/components/DashboardLayout";
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from "next-auth/react";
 
-
-const Analytics = () => {
+const DashboardAnalytics = () => {
   const session = useSession();
-  return <div>General info/account connection here...{session.status}</div>;
+  return (
+    <div>
+      General info/account connection here... {session.status.data}
+      {/* <button onClick={() => signOut({callbackUrl: "/"})}>Sign Out</button> */}
+    </div>
+  );
 };
 
-Analytics.getLayout = (page) => (
+DashboardAnalytics.getLayout = (page) => (
   <RootLayout>
     <DashboardLayout>{page}</DashboardLayout>
   </RootLayout>
 );
 
-export default Analytics;
+export default DashboardAnalytics;

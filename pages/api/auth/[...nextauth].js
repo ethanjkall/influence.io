@@ -11,8 +11,8 @@ export default NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
     }),
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID,
@@ -42,31 +42,16 @@ export default NextAuth({
       },
     }),
   ],
-  //   callbacks: {
-  //     async session({ session }) {
-  //       return session;
-  //     },
-  //     async signIn({ profile }) {
-  //       console.log(profile);
-  //       return profile;
-  //     },
-  //     session({ session, token }) {
-  //       session.user.id = token.id;
-  //       session.user.email = token.email;
-  //       return session;
-  //     },
-  //     jwt({ token, account, user }) {
-  //       if (account) {
-  //         token.accessToken = account.access_token;
-  //         token.id = user.id;
-  //         token.email = user.email;
-  //         console.log({ user });
-  //       }
-  //       return token;
-  //     },
-  //   },
+  callbacks: {
+    async session({ session, token }) {
+      return { session, token };
+    },
+    jwt({ token }) {
+      return token;
+    },
+  },
   session: {
     strategy: "jwt",
   },
-  secret: process.env.JWT_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 });

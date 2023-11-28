@@ -8,11 +8,13 @@ const inter = Inter({ subsets: ["latin"] });
 export default function App({ Component, pageProps }) {
   // If page layout is available, use it. Else return the page
   const getLayout = Component.getLayout || ((page) => page);
-  return getLayout(
+  return (
     <SessionProvider>
-      <main className={inter.className}>
-        <Component {...pageProps} />
-      </main>
+      {getLayout(
+        <main className={inter.className}>
+          <Component {...pageProps} />
+        </main>
+      )}
     </SessionProvider>
   );
 }

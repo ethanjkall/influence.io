@@ -1,6 +1,8 @@
-import OnlyFooterLayout from "@/components/OnlyFooterLayout";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import RootLayout from "@/components/RootLayout";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 export const Profile = () => {
   const [firstName, setFirstName] = useState("");
@@ -9,119 +11,123 @@ export const Profile = () => {
 
   const router = useRouter();
 
-  function handleSubmit(evnt) {
+  const { data: session, update } = useSession();
+  const user = session?.token;
+
+  async function handleSubmit(evnt) {
     evnt.preventDefault();
 
-    console.log(`First Name: ${firstName} Last Name: ${lastName} Email Address: ${emailAddress}`);
+    console.log(
+      `First Name: ${firstName} Last Name: ${lastName} Email Address: ${emailAddress}`
+    );
+
+    await fetch("/api/updateUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        emailAddress,
+        currentEmailAddress: user.email,
+      }),
+    });
+
+    update();
 
     router.push("/");
   }
 
   return (
-    <div className="text-center max-w-[80%] mx-auto">
-      <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mt-10 !leading-[1.4]">
-        Account Profile
-      </h3>
-
-      <div>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div>
+    <RootLayout>
+      <div className="flex flex-col content-center max-w-[80%] mx-auto">
+        <div className="flex flex-col mx-auto py-10">
+          {session && user && (
+            <Image
+              className="items-center rounded-full border border-gray-600"
+              loader={({ src }) => src}
+              src={user.picture || "/static/DataSecurity.jpg"}
+              width={200}
+              height={200}
+              alt="Profile Picture"
+              unoptimized
+              priority={true}
+              style={{
+                objectFit: "cover",
+              }}
+            />
+          )}
+          <h3 className="text-3xl md:text-4xl font-bold">
+            {user ? `${user.name}` : "Loading..."}
+          </h3>
+        </div>
+        <div className="content-start">
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-row items-center px-5 py-5">
               <label
                 htmlFor="first_name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                className="basis-1/4 mb-2 text-md font-medium text-gray-900"
               >
-                First name
+                First Name
               </label>
               <input
                 type="text"
                 id="first_name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="basis-3/4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="First Name"
                 value={firstName}
                 onChange={(evnt) => setFirstName(evnt.target.value)}
                 required
               />
             </div>
-            <div>
+            <div className="flex flex-row items-center px-5 py-5">
               <label
                 htmlFor="last_name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                className="basis-1/4 mb-2 text-md font-medium text-gray-900"
               >
-                Last name
+                Last Name
               </label>
               <input
                 type="text"
                 id="last_name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="basis-3/4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(evnt) => setLastName(evnt.target.value)}
                 required
               />
             </div>
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Email address
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Email Address"
-              value={emailAddress}
-              onChange={(evnt) => setEmailAddress(evnt.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Password"
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="confirmPassword"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Confirm password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Password Confirm"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Submit
-          </button>
-        </form>
+            <div className="flex flex-row items-center px-5 py-5">
+              <label
+                htmlFor="email"
+                className="basis-1/4 mb-2 text-md font-medium text-gray-900"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                className="basis-3/4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Email Address"
+                value={emailAddress}
+                onChange={(evnt) => setEmailAddress(evnt.target.value)}
+                required
+              />
+            </div>
+            <div className="flex justify-end p-10">
+              <button
+                type="submit"
+                className="text-white hover:bg-gray-1000 focus:ring-10 focus:outline-none focus:bg-gray-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
+              >
+                Apply
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </RootLayout>
   );
 };
-
-function Submit({ firstName, lastName, emailAddress }) {}
-
-Profile.getLayout = (page) => <OnlyFooterLayout>{page}</OnlyFooterLayout>;
 
 export default Profile;
